@@ -78,7 +78,7 @@ class DB:
             programmes.append({
                 'member': item['member']['S'],
                 'group': item['group']
-                ['S'], 'start_at': int(i['start_at']['N'])
+                ['S'], 'start_at': int(item['start_at']['N'])
             })
         return programmes
 
