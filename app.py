@@ -85,7 +85,7 @@ class DB:
 
 def get_latest_timetable() -> Iterable[dict]:
     resp = requests.get(TIME_TABLE, params={"order": 'asc', "started_at": int(time.time())}, timeout=3)
-    print(resp.status_code)
+    print("Showroom API: {}".format(resp.status_code))
     for slot in resp.json()['time_tables']:
         if '乃木坂46' in slot['main_name']:
             slot['member'], slot['group'] = slot['main_name'].replace(' ', '')[:-1].split('（')
@@ -103,10 +103,10 @@ URL: {url}
         json={'content': _message.format_map(message.to_json())},
         timeout=3,
     )
-    print(resp.status_code)
+    print("Discord API: {}".format(resp.status_code))
 
 
-if __name__ == '__main__':
+def handler(event, context):
     dynamodb = DB(table_name=DYNAMODB_TABLE)
     future_programmes = dynamodb.scan(int(time.time()))
 
@@ -120,3 +120,4 @@ if __name__ == '__main__':
                 if prog[0] == i['member'] and prog[1] == i['group'] and int(i['started_at']) > prog[2]:
                     dynamodb.set(p)
                     send_discord_message(p)
+    return 0
